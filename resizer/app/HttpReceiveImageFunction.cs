@@ -19,13 +19,13 @@ namespace ImageApi
             //[Blob("raw", Connection = "StoageAccountConnection")] BlobContainerClient containerClient,
             ILogger log)
         {
-            /*var imageStream = req.Body;
+            var imageStream = req.Body;
             if (imageStream == null)
             {
                 return new BadRequestObjectResult("No image provided");
             }
 
-            if (imageStream.Length == 0)
+            /*if (imageStream.Length == 0)
             {
                 return new BadRequestObjectResult("Empty image provided");
             }*/
