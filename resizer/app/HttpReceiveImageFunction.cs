@@ -19,7 +19,7 @@ namespace ImageApi
             [Blob("raw", Connection = "StoageAccountConnection")] BlobContainerClient containerClient,
             ILogger log)
         {
-            log.LogInformation("Receive starting")
+            log.LogInformation("Receive starting");
             var imageStream = req.Body;
             if (imageStream == null)
             {
