@@ -25,7 +25,7 @@ namespace ImageApi
                 return new BadRequestObjectResult("No image provided");
             }
 
-            if (imageStream.Length == 0)
+            if (imageStream?.Length == 0)
             {
                 return new BadRequestObjectResult("Empty image provided");
             }
