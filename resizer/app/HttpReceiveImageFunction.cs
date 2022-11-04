@@ -36,7 +36,7 @@ namespace ImageApi
             var contentInfo = await blobClient.UploadAsync(imageStream);
             var rawResponse = contentInfo.GetRawResponse();
 
-            return new CreatedResult($"/image/{blobName}", rawResponse.ReasonPhrase);
+            return new CreatedResult($"/image/{blobName}", $"response: {rawResponse.ReasonPhrase}");
         }
     }
 }
