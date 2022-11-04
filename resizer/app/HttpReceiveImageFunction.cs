@@ -19,6 +19,7 @@ namespace ImageApi
             [Blob("raw", Connection = "StoageAccountConnection")] BlobContainerClient containerClient,
             ILogger log)
         {
+            log.LogInformation("Receive starting")
             var imageStream = req.Body;
             if (imageStream == null)
             {
@@ -30,9 +31,12 @@ namespace ImageApi
                 return new BadRequestObjectResult("Empty image provided");
             }
 
+            log.LogInformation("Received image");
             var blobName = Guid.NewGuid().ToString();
             var blobClient = containerClient.GetBlobClient(blobName);
+            
             await blobClient.UploadAsync(imageStream);
+            log.LogInformation("Image uploaded");
 
             return new CreatedResult($"/image/{blobName}", blobName);
         }
