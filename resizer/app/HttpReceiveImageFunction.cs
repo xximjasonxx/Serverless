@@ -31,8 +31,8 @@ namespace ImageApi
             }
 
             var blobName = Guid.NewGuid().ToString();
-            //var blobClient = containerClient.GetBlobClient(blobName);
-            //await blobClient.UploadAsync(imageStream);
+            var blobClient = containerClient.GetBlobClient(blobName);
+            await blobClient.UploadAsync(imageStream);
 
             return new CreatedResult($"/image/{blobName}", blobName);
         }
