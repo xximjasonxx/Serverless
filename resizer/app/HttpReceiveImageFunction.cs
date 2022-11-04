@@ -16,10 +16,10 @@ namespace ImageApi
         [FunctionName("HttpReceiveImageFunction")]
         public async Task<IActionResult> ReceiveImage(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "image")] HttpRequest req,
-            [Blob("raw", Connection = "StoageAccountConnection")] BlobContainerClient containerClient,
+            //[Blob("raw", Connection = "StoageAccountConnection")] BlobContainerClient containerClient,
             ILogger log)
         {
-            var imageStream = req.Body;
+            /*var imageStream = req.Body;
             if (imageStream == null)
             {
                 return new BadRequestObjectResult("No image provided");
@@ -28,11 +28,11 @@ namespace ImageApi
             if (imageStream.Length == 0)
             {
                 return new BadRequestObjectResult("Empty image provided");
-            }
+            }*/
 
             var blobName = Guid.NewGuid().ToString();
-            var blobClient = containerClient.GetBlobClient(blobName);
-            await blobClient.UploadAsync(imageStream);
+            //var blobClient = containerClient.GetBlobClient(blobName);
+            //await blobClient.UploadAsync(imageStream);
 
             return new CreatedResult($"/image/{blobName}", blobName);
         }
