@@ -29,7 +29,7 @@ module raw_container_role_assignment 'modules/container-roleAssignment.bicep' = 
     storageAccountName: sa.outputs.storageAccountName
     containerName: 'raw'
     identityPrincipalId: id.properties.principalId
-    roleDefinitionId: '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1'
+    roleDefinitionId: 'ba92f5b4-2d11-453d-a403-e96b0029c9fe'
   }
 }
 
@@ -37,7 +37,7 @@ module resized_container_role_assignment 'modules/container-roleAssignment.bicep
   name: 'resized-container-role-assignment'
   params: {
     storageAccountName: sa.outputs.storageAccountName
-    containerName: 'reszied'
+    containerName: 'resized'
     identityPrincipalId: id.properties.principalId
     roleDefinitionId: 'ba92f5b4-2d11-453d-a403-e96b0029c9fe'
   }

@@ -4,7 +4,7 @@ param identityPrincipalId string
 param containers array = []
 
 resource sa 'Microsoft.Storage/storageAccounts@2022-05-01' = {
-  name: 'stserverlessimages'
+  name: 'stserverlessimagesjx01'
   location: location
   sku: {
     name: 'Standard_LRS'

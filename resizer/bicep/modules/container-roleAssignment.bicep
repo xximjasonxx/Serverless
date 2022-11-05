@@ -19,7 +19,7 @@ resource container 'Microsoft.Storage/storageAccounts/blobServices/containers@20
 }
 
 resource roleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(identityPrincipalId, roleDefinitionId, resourceGroup().name)
+  name: guid(identityPrincipalId, roleDefinitionId, resourceGroup().name, containerName)
   scope: container
   properties: {
     roleDefinitionId: resourceId('Microsoft.Authorization/roleDefinitions', roleDefinitionId)
