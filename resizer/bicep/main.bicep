@@ -103,6 +103,18 @@ resource func 'Microsoft.Web/sites@2022-03-01' = {
           name: 'AzureWebJobsStorage'
           value: webJobsStorageAccountConnectionString
         }
+        {
+          name: 'StorageAccountConnection__clientId'
+          value: id.properties.clientId
+        }
+        {
+          name: 'StorageAccountConnection__credential'
+          value: 'managedidentity'
+        }
+        {
+          name: 'StorageAccountConnection__serviceUri'
+          value: 'https://${sa.outputs.storageAccountName}.blob.${environment().suffixes.storage}'
+        }
       ]
     }
     httpsOnly: true
