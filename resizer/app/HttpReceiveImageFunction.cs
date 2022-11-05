@@ -13,10 +13,10 @@ namespace ImageApi
 {
     public class HttpReceiveImageFunction
     {
-        [FunctionName("HttpReceiveImageFunction2")]
+        [FunctionName("HttpReceiveImageFunction")]
         public async Task<IActionResult> ReceiveImage(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "image")] HttpRequest req,
-            [Blob("raw", FileAccess.Write, Connection = "StoageAccountConnection")] BlobContainerClient containerClient,
+            [Blob("raw", FileAccess.Write, Connection = "StorageAccountConnection")] BlobContainerClient containerClient,
             ILogger log)
         {
             var imageStream = req.Body;
