@@ -44,19 +44,6 @@ module resized_container_role_assignment 'modules/container-roleAssignment.bicep
 }
 
 // function app
-resource plan 'Microsoft.Web/serverfarms@2021-03-01' = {
-  name: 'plan-func-image-api-jx01'
-  location: location
-  kind: 'linux'
-  sku: {
-    name: 'Y1'
-    tier: 'Dynamic'
-  }
-  properties: {
-    reserved: true
-  }
-}
-
 resource appi 'Microsoft.Insights/components@2020-02-02' = {
   name: 'appi-func-image-api-jx01'
   location: location
@@ -66,57 +53,62 @@ resource appi 'Microsoft.Insights/components@2020-02-02' = {
   }
 }
 
-var webJobsStorageAccountConnectionString = 'DefaultEndpointsProtocol=https;AccountName=${sa.outputs.storageAccountName};AccountKey=${sa.outputs.storageAccountKey};EndpointSuffix=${environment().suffixes.storage}'
-resource func 'Microsoft.Web/sites@2022-03-01' = {
-  name: 'func-image-api-jx01'
-  location: location
-  kind: 'functionapp'
-  identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${id.id}': {} 
+module plan 'br:crbicepmodulesjx01.azurecr.io/microsoft.web/app-service-plan:1.0.0' = {
+  name: 'function-app-service-plan-deploy'
+  params: {
+    baseName: 'image-api-jx01'
+    location: location
+    sku: {
+      name: 'Y1'
+      tier: 'Dynamic'
     }
+    kind: 'functionapp'
+    isLinux: true
   }
+}
 
-  properties: {
-    serverFarmId: plan.id
-    siteConfig: {
-      
-      appSettings: [
-        {
-          name: 'AzureWebJobsStoageAccountConnection_serviceUri'
-          value: 'https://${sa.outputs.storageAccountName}.blob.${environment().suffixes.storage}'
-        }
-        {
-          name: 'FUNCTIONS_EXTENSION_VERSION'
-          value: '~4'
-        }
-        {
-          name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
-          value: appi.properties.InstrumentationKey
-        }
-        {
-          name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
-          value: 'InstrumentationKey=${appi.properties.InstrumentationKey}'
-        }
-        {
-          name: 'AzureWebJobsStorage'
-          value: webJobsStorageAccountConnectionString
-        }
-        {
-          name: 'StorageAccountConnection__clientId'
-          value: id.properties.clientId
-        }
-        {
-          name: 'StorageAccountConnection__credential'
-          value: 'managedidentity'
-        }
-        {
-          name: 'StorageAccountConnection__serviceUri'
-          value: 'https://${sa.outputs.storageAccountName}.blob.${environment().suffixes.storage}'
-        }
-      ]
-    }
-    httpsOnly: true
+module func 'br:crbicepmodulesjx01.azurecr.io/microsoft.web/function-app:1.0.0' = {
+  name: 'function-app-deploy'
+  params: {
+    baseName: 'image-api-jx01'
+    location: location
+    appServicePlanId: plan.outputs.planId
+    isLinux: true
+    identityType: 'managed'
+    managedIdentityId: id.id
+    appSettings: [
+      {
+        name: 'AzureWebJobsStoageAccountConnection_serviceUri'
+        value: 'https://${sa.outputs.storageAccountName}.blob.${environment().suffixes.storage}'
+      }
+      {
+        name: 'FUNCTIONS_EXTENSION_VERSION'
+        value: '~4'
+      }
+      {
+        name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
+        value: appi.properties.InstrumentationKey
+      }
+      {
+        name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+        value: 'InstrumentationKey=${appi.properties.InstrumentationKey}'
+      }
+      {
+        name: 'AzureWebJobsStorage'
+        value: 'DefaultEndpointsProtocol=https;AccountName=${sa.outputs.storageAccountName};AccountKey=${sa.outputs.storageAccountKey};EndpointSuffix=${environment().suffixes.storage}'
+      }
+      {
+        name: 'StorageAccountConnection__clientId'
+        value: id.properties.clientId
+      }
+      {
+        name: 'StorageAccountConnection__credential'
+        value: 'managedidentity'
+      }
+      {
+        name: 'StorageAccountConnection__serviceUri'
+        value: 'https://${sa.outputs.storageAccountName}.blob.${environment().suffixes.storage}'
+      }
+    ]
   }
 }
