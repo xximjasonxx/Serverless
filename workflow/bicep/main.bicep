@@ -36,32 +36,6 @@ resource cogText 'Microsoft.CognitiveServices/accounts@2022-03-01' = {
   }
 }
 
-// storage account
-module sa 'br:crbicepmodulesjx01.azurecr.io/microsoft.storage/account:1.0.1' = {
-  name: 'storage-account-deploy'
-  params: {
-    baseName: 'serverlessimagesjx02'
-    location: location
-    rbacAssignments: [
-      {
-        roleDefinitionId: 'acdd72a7-3385-48ef-bd42-f606fba81ae7'
-        principalId: managedIdentity.outputs.principalId
-      }
-    ]
-    containers: [
-      {
-        name: 'received'
-        rbacAssignments: [
-          {
-            roleDefinitionId: 'ba92f5b4-2d11-453d-a403-e96b0029c9fe'
-            principalId: managedIdentity.outputs.principalId
-          }
-        ]
-      }
-    ]
-  }
-}
-
 // application insights
 module appi 'br:crbicepmodulesjx01.azurecr.io/microsoft.insights/application-insights:1.0.0' = {
   name: 'application-insights-deploy'
@@ -86,6 +60,37 @@ module plan 'br:crbicepmodulesjx01.azurecr.io/microsoft.web/app-service-plan:1.0
     kind: 'functionapp'
     isLinux: true
   }
+}
+
+// storage account
+module sa 'br:crbicepmodulesjx01.azurecr.io/microsoft.storage/account:1.0.1' = {
+  name: 'storage-account-deploy'
+  params: {
+    baseName: 'serverlessimagesjx02'
+    location: location
+    rbacAssignments: [
+      {
+        roleDefinitionId: 'acdd72a7-3385-48ef-bd42-f606fba81ae7'
+        principalId: managedIdentity.outputs.principalId
+      }
+    ]
+    containers: [
+      {
+        name: 'received'
+        rbacAssignments: [
+          {
+            roleDefinitionId: 'ba92f5b4-2d11-453d-a403-e96b0029c9fe'
+            principalId: managedIdentity.outputs.principalId
+          }
+        ]
+      }
+    ]
+  }
+
+  dependsOn: [
+    managedIdentity
+    cogText
+  ]
 }
 
 // function app

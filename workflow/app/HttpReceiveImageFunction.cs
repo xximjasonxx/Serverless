@@ -1,41 +1,38 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
+using Azure.Storage.Blobs;
 
 namespace WorkflowApp
 {
     public class HttpReceiveImageFunction
     {
         [FunctionName("HttpReceiveImageFunction")]
-        public static async Task<IActionResult> Run(
+        public async Task<IActionResult> ReceiveImage(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "image")] HttpRequest req,
-            [Blob("raw", FileAccess.Write, Connection = "StorageAccountConnection")] BlobContainerClient containerClient,
+            [Blob("received", FileAccess.Write, Connection = "StorageAccountConnection")] BlobContainerClient containerClient,
             ILogger log)
         {
-            var imageStream = req.Body;
-            if (imageStream == null)
+            var formdata = await req.ReadFormAsync();
+            var file = formdata.Files.FirstOrDefault(x => x.Name == "image");
+            if (file == null)
             {
-                return new BadRequestObjectResult("No image provided");
+                return new BadRequestObjectResult("No key 'image' file found in form data");
             }
 
-            if (imageStream?.Length == 0)
-            {
-                return new BadRequestObjectResult("Empty image provided");
-            }
+            var filenamePrefix = Guid.NewGuid().ToString();
+            var newfileName = $"{filenamePrefix}-{file.FileName}";
+            using var fileStream = file.OpenReadStream();
+            var blobClient = containerClient.GetBlobClient(newfileName);
+            await blobClient.UploadAsync(fileStream);
 
-            var blobName = Guid.NewGuid().ToString();
-            var blobClient = containerClient.GetBlobClient(blobName);
-            
-            var contentInfo = await blobClient.UploadAsync(imageStream);
-            var rawResponse = contentInfo.GetRawResponse();
-
-            return new CreatedResult($"/image/{blobName}", $"response: {rawResponse.ReasonPhrase}");
+            return new AcceptedResult($"/status/{filenamePrefix}", $"Created blob {newfileName}");
         }
     }
 }

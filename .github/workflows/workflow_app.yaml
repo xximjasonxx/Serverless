@@ -1,7 +1,7 @@
 # This workflow will build a .NET project
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
 
-name: Resizer App
+name: Workflow App
 
 on:
   workflow_dispatch:
@@ -35,5 +35,5 @@ jobs:
     - name: Deploy
       uses: azure/functions-action@v1
       with:
-        app-name: func-image-api-jx01
+        app-name: func-image-api-jx02
         package: output/
