@@ -23,7 +23,7 @@ jobs:
       
     - name: Build
       run: dotnet publish --output ../../output
-      working-directory: resizer/app
+      working-directory: workflow/app
 
     - name: Login
       uses: azure/login@v1
