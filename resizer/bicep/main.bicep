@@ -4,52 +4,52 @@ targetScope = 'resourceGroup'
 param location string = resourceGroup().location
 
 // identity
-resource id 'Microsoft.ManagedIdentity/userAssignedIdentities@2022-01-31-preview' = {
-  name: 'id-serverless-example'
-  location: location
+module managedId 'br:crbicepmodulesjx01.azurecr.io/microsoft.identity/user-managed-identity:1.0.0' = {
+  name: 'managed-identity-deploy'
+  params: {
+    baseName: 'resizer-app'
+    location: location
+  }
 }
 
 // storage account
-module sa 'modules/storageAccount.bicep' = {
+module sa 'br:crbicepmodulesjx01.azurecr.io/microsoft.storage/account:1.0.0' = {
   name: 'storage-account-deploy'
   params: {
+    baseName: 'serverlessimagesjx01'
     location: location
-    identityPrincipalId: id.properties.principalId
+    rbacAssignments: [
+      {
+        roleDefinitionId: 'acdd72a7-3385-48ef-bd42-f606fba81ae7'
+        principalId: managedId.outputs.principalId
+      }
+    ]
     containers: [
-      'raw'
-      'resized'
+      {
+        name: 'no-rbac'
+      }
+      {
+        name: 'rbac'
+        rbacAssignments: [
+          {
+            roleDefinitionId: 'ba92f5b4-2d11-453d-a403-e96b0029c9fe'
+            principalId: managedId.outputs.principalId
+          }
+        ]
+      }
     ]
   }
 }
 
-// contianer role assignments
-module raw_container_role_assignment 'modules/container-roleAssignment.bicep' = {
-  name: 'raw-container-role-assignment'
-  params: {
-    storageAccountName: sa.outputs.storageAccountName
-    containerName: 'raw'
-    identityPrincipalId: id.properties.principalId
-    roleDefinitionId: 'ba92f5b4-2d11-453d-a403-e96b0029c9fe'
-  }
-}
-
-module resized_container_role_assignment 'modules/container-roleAssignment.bicep' = {
-  name: 'resized-container-role-assignment'
-  params: {
-    storageAccountName: sa.outputs.storageAccountName
-    containerName: 'resized'
-    identityPrincipalId: id.properties.principalId
-    roleDefinitionId: 'ba92f5b4-2d11-453d-a403-e96b0029c9fe'
-  }
-}
 
 // function app
-resource appi 'Microsoft.Insights/components@2020-02-02' = {
-  name: 'appi-func-image-api-jx01'
-  location: location
-  kind: 'web'
-  properties: {
-    Application_Type: 'web'
+module appi 'br:crbicepmodulesjx01.azurecr.io/microsoft.insights/application-insights:1.0.0' = {
+  name: 'application-insights-deploy'
+  params: {
+    baseName: 'image-api-jx01'
+    location: location
+    kind: 'web'
+    applicationType: 'web'
   }
 }
 
@@ -75,7 +75,7 @@ module func 'br:crbicepmodulesjx01.azurecr.io/microsoft.web/function-app:1.0.0' 
     appServicePlanId: plan.outputs.planId
     isLinux: true
     identityType: 'managed'
-    managedIdentityId: id.id
+    managedIdentityId: managedId.outputs.resourceId
     appSettings: [
       {
         name: 'AzureWebJobsStoageAccountConnection_serviceUri'
@@ -87,11 +87,11 @@ module func 'br:crbicepmodulesjx01.azurecr.io/microsoft.web/function-app:1.0.0' 
       }
       {
         name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
-        value: appi.properties.InstrumentationKey
+        value: appi.outputs.instrumentationKey
       }
       {
         name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
-        value: 'InstrumentationKey=${appi.properties.InstrumentationKey}'
+        value: 'InstrumentationKey=${appi.outputs.instrumentationKey}'
       }
       {
         name: 'AzureWebJobsStorage'
@@ -99,7 +99,7 @@ module func 'br:crbicepmodulesjx01.azurecr.io/microsoft.web/function-app:1.0.0' 
       }
       {
         name: 'StorageAccountConnection__clientId'
-        value: id.properties.clientId
+        value: managedId.outputs.clientId
       }
       {
         name: 'StorageAccountConnection__credential'
