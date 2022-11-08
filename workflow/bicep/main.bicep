@@ -94,7 +94,7 @@ module sa 'br:crbicepmodulesjx01.azurecr.io/microsoft.storage/account:1.0.1' = {
 }
 
 // function app
-module func 'br:crbicepmodulesjx01.azurecr.io/microsoft.web/function-app:1.1.0' = {
+module func 'br:crbicepmodulesjx01.azurecr.io/microsoft.web/function-app:1.1.1' = {
   name: 'function-app-deploy'
   params: {
     baseName: 'image-api-jx02'
