@@ -9,7 +9,7 @@ on:
     - main
     paths:
     - .github/workflows/workflow_app.yaml
-    - workflow/app
+    - workflow/app/**
 
 permissions:
   id-token: write
