@@ -4,7 +4,12 @@
 name: Workflow App
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+    - main
+    paths:
+    - .github/workflows/workflow_app.yaml
+    - workflow/app
 
 permissions:
   id-token: write

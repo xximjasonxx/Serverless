@@ -4,7 +4,12 @@
 name: Resizer App
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/resizer_app.yaml
+      - resizer/app
 
 permissions:
   id-token: write
