@@ -7,15 +7,18 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Logging;
 
-namespace app
+namespace WorkflowApp
 {
     public static class OrchestrateImageProcessingFunction
     {
         [FunctionName("OrchestrateProcessImage")]
         public static async Task<List<string>> RunOrchestrator(
-            [OrchestrationTrigger] IDurableOrchestrationContext context)
+            [OrchestrationTrigger] IDurableOrchestrationContext context)    
         {
-            
+            var blobName = context.GetInput<string>();
+
+            // start an activity to determine acceptable score
+            var acceptableScore = await context.CallActivityAsync<int>("GetAcceptablityScore", new { blobName });
         }
     }
 }
