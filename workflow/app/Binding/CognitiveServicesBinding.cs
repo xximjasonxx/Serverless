@@ -12,7 +12,7 @@ namespace WorkflowApp.Binding
 
         private CognitiveServicesClient BuildClientFromAttribute(CognitiveServicesBindingAttribute arg)
         {
-            return new CognitiveServicesClient();
+            return new CognitiveServicesClient(arg.Key, arg.Endpoint, arg.Location);
         }
     }
 }

@@ -19,11 +19,12 @@ namespace WorkflowApp
             if (instance == null)
             {
                 log.LogInformation($"Starting orchestration for {blobName}");
-                await starter.StartNewAsync("OrchestrateProcessImage", blobName);
+                await starter.StartNewAsync("OrchestrateProcessImage", blobName, blobName);
             }
             else
             {
                 log.LogInformation($"Orchestration for {blobName} already exists");
+                await starter.PurgeInstanceHistoryAsync(blobName);
             }
         }
     }
