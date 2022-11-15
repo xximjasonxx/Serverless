@@ -4,22 +4,22 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using WorkflowApp.Binding;
+using WorkflowApp.Models;
 
 namespace WorkflowApp
 {
-    public class ActivityGetAcceptabilityScoreFunction
+    public class ActivityDetectBrandsFunction
     {
-        [FunctionName("GetAcceptablityScore")]
-        public async Task<int> Run(
+        [FunctionName("DetectBrands")]
+        public async Task<BrandResults> Run(
             [ActivityTrigger] string blobName,
             [Blob("received/{blobName}", FileAccess.Read, Connection = "StorageAccountConnection")] Stream receivedBlob,
             [CognitiveServicesBinding] CognitiveServicesClient cognitiveServicesClient,
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
-            var acceptableScore = await cognitiveServicesClient.GetFaceCount(receivedBlob);
-
-            return acceptableScore;
+            
+            return await cognitiveServicesClient.DetectBrands(receivedBlob);
         }
     }
 }
