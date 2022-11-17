@@ -16,10 +16,10 @@ namespace WorkflowApp
             var blobName = context.GetInput<string>();
 
             // start an activity to determine acceptable score
-            var acceptableScore = await context.CallActivityAsync<int>("GetAcceptablityScore", blobName);
+            var faceCount = await context.CallActivityAsync<int>("GetAcceptablityScore", blobName);
 
             // if acceptable score is greater than zero, request approval
-            if (acceptableScore > 0)
+            if (faceCount > 0)
             {
                 // send approval request message
                 await context.CallActivityAsync("SendSignal", new SignalInfo
@@ -37,27 +37,28 @@ namespace WorkflowApp
                 await Task.WhenAny(new List<Task> { approvalResponse });
             }
 
-            // now fan out to perform various analysis of the image
-            // the callers will retunr when they are done
-            var brandDetectionResults = context.CallActivityAsync<BrandResults>("DetectBrands", blobName);
-            var adultContextDetectResults = context.CallActivityAsync<CategoryResults>("DetectCategories", blobName);
-            var colorDetectResults = context.CallActivityAsync<ColorResult>("DetectColors", blobName);
-            var resizeAction = context.CallActivityAsync<string>("ResizeImage", blobName);
+            // save the result
+            var saveImageTask = context.CallActivityAsync("SaveImage", blobName);
+            var colorDetectTask = context.CallActivityAsync<ColorResult>("DetectColor", blobName);
+            await Task.WhenAll(new List<Task>
+            {
+                saveImageTask,
+                colorDetectTask
+            });
 
-            await Task.WhenAll(new List<Task> { brandDetectionResults, adultContextDetectResults, colorDetectResults, resizeAction });
-            var results = SaveResult.Create(
-                brandDetectionResults.Result,
-                adultContextDetectResults.Result,
-                colorDetectResults.Result,
-                resizeAction.Result,
-                blobName);
+            var saveResult = new SaveResult
+            {
+                BlobName = blobName,
+                ColorResult = colorDetectTask.Result
+            };
 
-            await context.CallActivityAsync("SaveResults", results);
+            // save everything
+            await context.CallActivityAsync("SaveResult", saveResult);
 
             // send notification of save
             await context.CallActivityAsync("SendSignal", new SignalInfo
             {
-                SignalType = SignalType.Information,
+                SignalType = SignalType.Success,
                 SignalName = "Image.Processed",
                 Metadata = new Dictionary<string, string>
                 {

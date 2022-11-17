@@ -13,7 +13,7 @@ namespace ImageApi
     public class BlobResizeImageFunction
     {
         [FunctionName("BlobResizeImageFunction")]
-        public async Task Run(
+        public async Task ResizeImage(
             [BlobTrigger("raw/{blobName}", Connection = "StorageAccountConnection")]Stream rawBlob,
             string blobName,
             [Blob("resized/{blobName}", FileAccess.Write, Connection = "StorageAccountConnection")]BlobClient resizeBlob,

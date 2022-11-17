@@ -43,35 +43,5 @@ namespace WorkflowApp
                 DominentColors = analysisResult.Color.DominantColors.ToList()
             };
         }
-
-        public async Task<CategoryResults> DetectCategories(Stream receivedBlob)
-        {
-            var featureTypes = new List<VisualFeatureTypes?> { VisualFeatureTypes.Categories };
-            var analysisResult = await _computerVisionClient.AnalyzeImageInStreamAsync(receivedBlob, featureTypes);
-
-            return new CategoryResults
-            {
-                Results = analysisResult.Categories.Select(c => new CategoryResult
-                {
-                    CategoryName = c.Name,
-                    Score = c.Score
-                }).ToList()
-            };
-        }
-
-        public async Task<BrandResults> DetectBrands(Stream receivedBlob)
-        {
-            var featureTypes = new List<VisualFeatureTypes?> { VisualFeatureTypes.Brands };
-            var analysisResult = await _computerVisionClient.AnalyzeImageInStreamAsync(receivedBlob, featureTypes);
-
-            return new BrandResults
-            {
-                Results = analysisResult.Brands.Select(x => new BrandResult
-                {
-                    BrandName = x.Name,
-                    ConfidenceScore = x.Confidence
-                }).ToList()
-            };
-        }
     }
 }

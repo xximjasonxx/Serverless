@@ -1,25 +1,20 @@
-
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Extensions.Logging;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
+using Microsoft.Extensions.Logging;
 using WorkflowApp.Models;
 
 namespace WorkflowApp
 {
     public class ActivitySaveResultFunction
     {
-        [FunctionName("SaveResults")]
-        public async Task Run(
+        [FunctionName("SaveResult")]
+        public async Task SaveResult(
             [ActivityTrigger] SaveResult saveResult,
-            [CosmosDB(
-                databaseName: "Results",
-                collectionName: "ImageResults",
-                ConnectionStringSetting = "CosmosDBConnection")] IAsyncCollector<SaveResult> results,
+            [CosmosDB("images", "image_data", ConnectionStringSetting = "CosmosDBConnection")] ICollector<SaveResult> saveResults,
             ILogger log)
         {
-            log.LogInformation("C# HTTP trigger function processed a request.");
-            
+            saveResults.Add(saveResult);
         }
     }
 }

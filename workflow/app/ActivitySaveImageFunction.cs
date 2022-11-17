@@ -1,25 +1,23 @@
-using System.IO;
+
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
-using WorkflowApp.Binding;
-using WorkflowApp.Models;
+using System.IO;
 
 namespace WorkflowApp
 {
-    public class ActivityDetectBrandsFunction
+    public class ActivitySaveImageFunction
     {
-        [FunctionName("DetectBrands")]
-        public async Task<BrandResults> Run(
+        [FunctionName("SaveImage")]
+        public async Task SaveImage(
             [ActivityTrigger] string blobName,
             [Blob("received/{blobName}", FileAccess.Read, Connection = "StorageAccountConnection")] Stream receivedBlob,
-            [CognitiveServicesBinding] CognitiveServicesClient cognitiveServicesClient,
+            [Blob("original/{blobName}", FileAccess.Write, Connection = "StorageAccountConnection")] Stream originalBlob,
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
-            
-            return await cognitiveServicesClient.DetectBrands(receivedBlob);
+            await receivedBlob.CopyToAsync(originalBlob);
         }
     }
 }

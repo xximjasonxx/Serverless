@@ -8,6 +8,7 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Azure.Storage.Blobs;
+using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 
 namespace WorkflowApp
 {
@@ -17,6 +18,7 @@ namespace WorkflowApp
         public async Task<IActionResult> ReceiveImage(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "image")] HttpRequest req,
             [Blob("received", FileAccess.Write, Connection = "StorageAccountConnection")] BlobContainerClient containerClient,
+            [DurableClient] IDurableClient starter,
             ILogger log)
         {
             var formdata = await req.ReadFormAsync();
@@ -26,13 +28,20 @@ namespace WorkflowApp
                 return new BadRequestObjectResult("No key 'image' file found in form data");
             }
 
-            var filenamePrefix = Guid.NewGuid().ToString();
-            var newfileName = $"{filenamePrefix}-{file.FileName}";
+            var blobName = $"{Guid.NewGuid().ToString()}-{file.FileName}";
             using var fileStream = file.OpenReadStream();
-            var blobClient = containerClient.GetBlobClient(newfileName);
+            var blobClient = containerClient.GetBlobClient(blobName);
             await blobClient.UploadAsync(fileStream);
 
-            return new AcceptedResult($"/status/{filenamePrefix}", $"Created blob {newfileName}");
+            var instance = await starter.GetStatusAsync(blobName);
+            if (instance == null)
+            {
+                log.LogInformation($"Starting orchestration for {blobName}");
+                await starter.StartNewAsync("OrchestrateProcessImage", blobName, blobName);
+                return starter.CreateCheckStatusResponse(req, blobName);
+            }
+
+            return new ConflictResult();
         }
     }
 }

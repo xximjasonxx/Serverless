@@ -15,6 +15,6 @@ namespace WorkflowApp
     {
         Warning,
         Error,
-        Information
+        Success
     }
 }
