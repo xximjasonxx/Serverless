@@ -22,7 +22,7 @@ namespace WorkflowApp
             if (faceCount > 0)
             {
                 // send approval request message
-                await context.CallActivityAsync("SendSignal", new SignalInfo
+                /*await context.CallActivityAsync("SendSignal", new SignalInfo
                 {
                     SignalType = SignalType.Warning,
                     SignalName = SignalInfo.ApprovalRequestEvent,
@@ -30,7 +30,7 @@ namespace WorkflowApp
                     {
                         { "blobLocation", $"image/raw/{blobName}" }
                     }
-                });
+                });*/
 
                 // wait for the approval
                 var approvalResponse = context.WaitForExternalEvent<bool>("Image.Approved");
@@ -56,7 +56,7 @@ namespace WorkflowApp
             await context.CallActivityAsync("SaveResult", saveResult);
 
             // send notification of save
-            await context.CallActivityAsync("SendSignal", new SignalInfo
+            /*await context.CallActivityAsync("SendSignal", new SignalInfo
             {
                 SignalType = SignalType.Success,
                 SignalName = "Image.Processed",
@@ -64,7 +64,7 @@ namespace WorkflowApp
                 {
                     { "lookupLocation", $"results/{blobName}" }
                 }
-            });
+            });*/
         }
     }
 }

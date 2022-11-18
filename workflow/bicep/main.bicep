@@ -135,10 +135,6 @@ module func 'br:crbicepmodulesjx01.azurecr.io/microsoft.web/function-app:1.1.1' 
     applicationInsightsInstrumentationKey: appi.outputs.instrumentationKey
     appSettings: [
       {
-        name: 'AzureWebJobsStoageAccountConnection_serviceUri'
-        value: 'https://${sa.outputs.storageAccountName}.blob.${environment().suffixes.storage}'
-      }
-      {
         name: 'FUNCTIONS_EXTENSION_VERSION'
         value: '~4'
       }
