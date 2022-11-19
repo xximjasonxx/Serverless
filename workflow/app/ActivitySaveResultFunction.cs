@@ -1,4 +1,4 @@
-using System.Threading.Tasks;
+
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
@@ -10,14 +10,15 @@ namespace WorkflowApp
     {
         [FunctionName("SaveResult")]
         public void SaveResult(
-            [ActivityTrigger] IDurableActivityContext context,
-            //[CosmosDB("images", "image_data", ConnectionStringSetting = "CosmosDBConnection")] ICollector<SaveResult> saveResults,
+            [ActivityTrigger] SaveResult incomingResult,
+            [CosmosDB(
+                databaseName: "images",
+                collectionName:"image_data",
+                ConnectionStringSetting = "CosmosDBConnection")]out SaveResult outgoingResult,
             ILogger log)
         {
-            var saveResult = context.GetInput<SaveResult>();
-
-            log.LogInformation($"Saving result for image {saveResult.BlobName}");
-            //saveResults.Add(saveResult);
+            log.LogInformation($"Saving result for image {incomingResult.BlobName}");
+            outgoingResult = incomingResult;
         }
     }
 }
