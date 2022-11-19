@@ -84,6 +84,15 @@ module sa 'br:crbicepmodulesjx01.azurecr.io/microsoft.storage/account:1.0.1' = {
           }
         ]
       }
+      {
+        name: 'original'
+        rbacAssignments: [
+          {
+            roleDefinitionId: 'ba92f5b4-2d11-453d-a403-e96b0029c9fe'
+            principalId: managedIdentity.outputs.principalId
+          }
+        ]
+      }
     ]
   }
 
@@ -122,7 +131,7 @@ module cosmos 'br:crbicepmodulesjx01.azurecr.io/microsoft.documentdb/account:1.1
 }
 
 // function app
-module func 'br:crbicepmodulesjx01.azurecr.io/microsoft.web/function-app:1.1.1' = {
+module func 'br:crbicepmodulesjx01.azurecr.io/microsoft.web/function-app:1.1.2' = {
   name: 'function-app-deploy'
   params: {
     baseName: 'image-api-jx02'
@@ -161,6 +170,18 @@ module func 'br:crbicepmodulesjx01.azurecr.io/microsoft.web/function-app:1.1.1' 
       {
         name: 'CosmosDBConnection__serviceUri'
         value: cosmos.outputs.cosmosdb_endpoint
+      }
+      {
+        name: 'CognitiveServicesEndpoint'
+        value: cogText.properties.endpoint
+      }
+      {
+        name: 'CognitiveServicesLocation'
+        value: cogText.location
+      }
+      {
+        name: 'CognitiveServicesKey'
+        value: '@Microsoft.KeyVault(VaultName=kv-secret-service-jx01;SecretName=cognitive-service-access-key)'
       }
     ]
   }

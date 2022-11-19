@@ -14,6 +14,7 @@ namespace WorkflowApp
             [CosmosDB("images", "image_data", ConnectionStringSetting = "CosmosDBConnection")] ICollector<SaveResult> saveResults,
             ILogger log)
         {
+            log.LogInformation($"Saving result for image {saveResult.BlobName}");
             saveResults.Add(saveResult);
         }
     }
