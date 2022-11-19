@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using WorkflowApp.Models;
+using Microsoft.Extensions.Logging;
 
 namespace WorkflowApp
 {
@@ -11,7 +12,8 @@ namespace WorkflowApp
     {
         [FunctionName("OrchestrateProcessImage")]
         public static async Task RunOrchestrator(
-            [OrchestrationTrigger] IDurableOrchestrationContext context)    
+            [OrchestrationTrigger] IDurableOrchestrationContext context,
+            ILogger log)
         {
             var blobName = context.GetInput<string>();
 
@@ -53,6 +55,7 @@ namespace WorkflowApp
             };
 
             // save everything
+            log.LogInformation($"Save result for blob ${saveResult.BlobName}");
             await context.CallActivityAsync("SaveResult", saveResult);
 
             // send notification of save

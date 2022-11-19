@@ -9,7 +9,7 @@ namespace WorkflowApp
     public class ActivitySaveResultFunction
     {
         [FunctionName("SaveResult")]
-        public async Task SaveResult(
+        public void SaveResult(
             [ActivityTrigger] IDurableActivityContext context,
             //[CosmosDB("images", "image_data", ConnectionStringSetting = "CosmosDBConnection")] ICollector<SaveResult> saveResults,
             ILogger log)
