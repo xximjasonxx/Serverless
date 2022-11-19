@@ -2,6 +2,7 @@
 targetScope = 'resourceGroup'
 param location string = resourceGroup().location
 
+
 // managed identity
 module managedIdentity 'br:crbicepmodulesjx01.azurecr.io/microsoft.identity/user-managed-identity:1.0.0' = {
   name: 'managed-identity-deploy'
@@ -11,29 +12,9 @@ module managedIdentity 'br:crbicepmodulesjx01.azurecr.io/microsoft.identity/user
   }
 }
 
-resource cogText 'Microsoft.CognitiveServices/accounts@2022-03-01' = {
-  name: 'cog-lang-serverless-jx03'
-  location: location
-  sku: {
-    name: 'S0'
-  }
-
-  identity: {
-    type: 'SystemAssigned'
-  }
-
-  kind: 'CognitiveServices'
-
-  properties: {
-    apiProperties: {}
-    customSubDomainName: 'cog-serverless-jx03'
-    networkAcls: {
-        defaultAction: 'Allow'
-        virtualNetworkRules: []
-        ipRules: []
-    }
-    publicNetworkAccess: 'Enabled'
-  }
+resource cogText 'Microsoft.CognitiveServices/accounts@2022-03-01' existing = {
+  name: 'cog-services-jx01'
+  scope: resourceGroup('rg-services')
 }
 
 // application insights
@@ -106,7 +87,7 @@ module sa 'br:crbicepmodulesjx01.azurecr.io/microsoft.storage/account:1.0.1' = {
 module cosmos 'br:crbicepmodulesjx01.azurecr.io/microsoft.documentdb/account:1.1.1' = {
   name: 'cosmosdb-deploy'
   params: {
-    base_name: 'serverlessimages-ym01'
+    base_name: 'workflow-app-jx01'
     location: location
     sql_databases: [
       {
@@ -134,7 +115,7 @@ module cosmos 'br:crbicepmodulesjx01.azurecr.io/microsoft.documentdb/account:1.1
 module func 'br:crbicepmodulesjx01.azurecr.io/microsoft.web/function-app:1.1.2' = {
   name: 'function-app-deploy'
   params: {
-    baseName: 'image-api-jx02'
+    baseName: 'workflow-app-jx01'
     location: location
     appServicePlanId: plan.outputs.planId
     isLinux: true
@@ -168,7 +149,7 @@ module func 'br:crbicepmodulesjx01.azurecr.io/microsoft.web/function-app:1.1.2' 
         value: 'managedidentity'
       }
       {
-        name: 'CosmosDBConnection__serviceUri'
+        name: 'CosmosDBConnection__accountEndpoint'
         value: cosmos.outputs.cosmosdb_endpoint
       }
       {

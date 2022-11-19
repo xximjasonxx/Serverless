@@ -40,5 +40,5 @@ jobs:
     - name: Deploy
       uses: azure/functions-action@v1
       with:
-        app-name: func-image-api-jx02
+        app-name: func-workflow-app-jx01
         package: output/
