@@ -12,7 +12,7 @@ namespace WorkflowApp
         [FunctionName("SendSignal")]
         public void SendSignal(
             [ActivityTrigger] SignalInfo signalInfo,
-            [SignalR(HubName = "Signals", ConnectionStringSetting = "SignalRConnection")]ICollector<SignalRMessage> signalMessages,
+            [SignalR(HubName = "Signals", ConnectionStringSetting = "SignalRServiceConnectionString")]ICollector<SignalRMessage> signalMessages,
             ILogger log)
         {
             signalMessages.Add(new SignalRMessage
