@@ -76,11 +76,6 @@ module sa 'br:crbicepmodulesjx01.azurecr.io/microsoft.storage/account:1.0.1' = {
       }
     ]
   }
-
-  dependsOn: [
-    managedIdentity
-    cogText
-  ]
 }
 
 // cosmosdb
@@ -102,12 +97,37 @@ module cosmos 'br:crbicepmodulesjx01.azurecr.io/microsoft.documentdb/account:1.1
         ]
       }
     ]
-    rbac_assignments: [
-      {
-        principalId: managedIdentity.outputs.principalId
-        roleDefinitionId: '5bd9cd88-fe45-4216-938b-f97437e15450'
-      }
-    ]
+  }
+}
+
+// signalr
+module signalr 'br:crbicepmodulesjx01.azurecr.io/microsoft.signalr/signalr:1.0.0' = {
+  name: 'signalr-deploy'
+  params: {
+    baseName: 'workflow-app-jx01'
+    location: location
+  }
+}
+
+// store sensitive information
+module createCosmosConnectionStringSecret 'br:crbicepmodulesjx01.azurecr.io/helpers/create-cosmosdb-account-connection-string-secret:1.0.1' = {
+  name: 'create-cosmosdb-account-connection-string-secret-deploy'
+  params: {
+    keyVaultName: 'kv-secret-service-jx01'
+    keyVaultResourceGroupName: 'rg-services'
+    cosmosDbName: cosmos.outputs.cosmosdb_name
+    secretName: 'cosmosdb-account-connection-string'
+  }
+}
+
+module createCognitiveServicesAccountKeySecret 'br:crbicepmodulesjx01.azurecr.io/helpers/create-cognitive-service-account-key-secret:1.0.1' = {
+  name: 'create-cognitive-service-account-key-secret-deploy'
+  params: {
+    keyVaultName: 'kv-secret-service-jx01'
+    keyVaultResourceGroupName: 'rg-services'
+    cognitiveServicesName: 'cog-services-jx01'
+    cognitiveServicesResourceGroupName: 'rg-services'
+    secretName: 'cognitive-service-access-key'
   }
 }
 
@@ -141,16 +161,8 @@ module func 'br:crbicepmodulesjx01.azurecr.io/microsoft.web/function-app:1.1.2' 
         value: 'https://${sa.outputs.storageAccountName}.blob.${environment().suffixes.storage}'
       }
       {
-        name: 'CosmosDBConnection__clientId'
-        value: managedIdentity.outputs.clientId
-      }
-      {
-        name: 'CosmosDBConnection__credential'
-        value: 'managedidentity'
-      }
-      {
-        name: 'CosmosDBConnection__accountEndpoint'
-        value: cosmos.outputs.cosmosdb_endpoint
+        name: 'CosmosDBConnection'
+        value: '@Microsoft.KeyVault(VaultName=kv-secret-service-jx01;SecretName=cosmosdb-account-connection-string)'
       }
       {
         name: 'CognitiveServicesEndpoint'
