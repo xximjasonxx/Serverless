@@ -21,8 +21,8 @@ namespace WorkflowApp
             ILogger log)
         {
             var statusResult = await client.GetStatusAsync(instanceId);
-            if (statusResult == null || statusResult.RuntimeStatus != OrchestrationRuntimeStatus.Running)
-                return new BadRequestObjectResult($"Instance ${instanceId} could not be approved");
+            if (statusResult == null)
+                return new BadRequestObjectResult($"Instance {instanceId} could not be approved");
 
             await client.RaiseEventAsync(statusResult.InstanceId, "Image.Approved");
             return new AcceptedResult();
