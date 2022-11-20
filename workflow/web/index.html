@@ -19,9 +19,16 @@
             console.log(message);
             alert("Received a message");
           });
+          
+          connection.onclose(err =>
+            console.log('err reconnecting  ', err)
+          );
 
-          connection.start()
-            .catch(console.error);
+          connection.start().then(function () {
+            console.log("Connected");
+          }).catch(function (err) {
+            return console.error(err.toString());
+          });
       });
     </script>
   </body>

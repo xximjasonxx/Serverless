@@ -15,7 +15,7 @@ namespace WorkflowApp
     {
         [FunctionName("negotiate")]
         public SignalRConnectionInfo Negotiate(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "negotiate")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequest req,
             [SignalRConnectionInfo(HubName = "Signals", ConnectionStringSetting = "SignalRServiceConnectionString")] SignalRConnectionInfo connectionInfo,  
             ILogger log)
         {
