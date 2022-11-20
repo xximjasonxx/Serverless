@@ -15,7 +15,7 @@ namespace WorkflowApp
     {
         [FunctionName("HttpApproveImageFunction")]
         public async Task<IActionResult> ApproveImage(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "/approve/{instanceId}")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "approve/{instanceId}")] HttpRequest req,
             [DurableClient] IDurableClient client,
             string instanceId,
             ILogger log)
