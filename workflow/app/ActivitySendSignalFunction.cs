@@ -10,14 +10,22 @@ namespace WorkflowApp
     public class ActivitySendSignalFunction
     {
         [FunctionName("SendSignal")]
-        public async Task Run(
+        public void SendSignal(
             [ActivityTrigger] SignalInfo signalInfo,
-            [SignalR(HubName = "Signals", ConnectionStringSetting = "SignalRConnection")]IAsyncCollector<SignalRMessage> signalMessages,
+            [SignalR(HubName = "Signals", ConnectionStringSetting = "SignalRConnection")]ICollector<SignalRMessage> signalMessages,
             ILogger log)
         {
-            await signalMessages.AddAsync(new SignalRMessage
+            signalMessages.Add(new SignalRMessage
             {
-                
+                Target = "MessageSend",
+                Arguments = new[]
+                {
+                    new {
+                        Name = signalInfo.SignalName,
+                        Level = signalInfo.SignalType.ToString(),
+                        Data = signalInfo.Metadata
+                    }
+                }
             });
         }
     }

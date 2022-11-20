@@ -1,0 +1,28 @@
+<html>
+  <head>
+    <title>Image API</title>
+
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.7/signalr.min.js"></script>
+  </head>
+
+  <body>
+
+    <script>
+      $(function() {
+        const connection = new signalR.HubConnectionBuilder()
+          .withUrl("https://func-workflow-app-jx01.azurewebsites.net/api/negotiate")
+          .configureLogging(signalR.LogLevel.Information)
+          .build();
+
+          connection.on('MessageSend', (message) => {
+            console.log(message);
+            alert("Received a message");
+          });
+
+          connection.start()
+            .catch(console.error);
+      });
+    </script>
+  </body>
+</html>

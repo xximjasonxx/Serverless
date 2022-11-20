@@ -13,7 +13,7 @@ namespace WorkflowApp
 {
     public class HttpApproveImageFunction
     {
-        [FunctionName("HttpApproveImageFunction")]
+        [FunctionName("ApproveImage")]
         public async Task<IActionResult> ApproveImage(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "approve/{instanceId}")] HttpRequest req,
             [DurableClient] IDurableClient client,

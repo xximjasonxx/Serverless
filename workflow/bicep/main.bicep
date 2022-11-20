@@ -91,7 +91,7 @@ module cosmos 'br:crbicepmodulesjx01.azurecr.io/microsoft.documentdb/account:1.1
           {
             name: 'image_data'
             partition_keys: [
-              '/blobName'
+              '/BlobName'
             ]
           }
         ]
