@@ -12,6 +12,17 @@ module managedIdentity 'br:crbicepmodulesjx01.azurecr.io/microsoft.identity/user
   }
 }
 
+module createCognitiveServicesAccountKeySecret 'br:crbicepmodulesjx01.azurecr.io/helpers/create-cognitive-service-account-key-secret:1.0.1' = {
+  name: 'create-cognitive-service-account-key-secret-deploy'
+  params: {
+    keyVaultName: 'kv-secret-service-jx01'
+    keyVaultResourceGroupName: 'rg-services'
+    cognitiveServicesName: 'cog-services-jx01'
+    cognitiveServicesResourceGroupName: 'rg-services'
+    secretName: 'cognitive-service-access-key'
+  }
+}
+
 resource cogText 'Microsoft.CognitiveServices/accounts@2022-03-01' existing = {
   name: 'cog-services-jx01'
   scope: resourceGroup('rg-services')
@@ -100,16 +111,6 @@ module cosmos 'br:crbicepmodulesjx01.azurecr.io/microsoft.documentdb/account:1.1
   }
 }
 
-// signalr
-module signalr 'br:crbicepmodulesjx01.azurecr.io/microsoft.signalr/signalr:1.0.0' = {
-  name: 'signalr-deploy'
-  params: {
-    baseName: 'workflow-app-jx01'
-    location: location
-  }
-}
-
-// store sensitive information
 module createCosmosConnectionStringSecret 'br:crbicepmodulesjx01.azurecr.io/helpers/create-cosmosdb-account-connection-string-secret:1.0.1' = {
   name: 'create-cosmosdb-account-connection-string-secret-deploy'
   params: {
@@ -120,14 +121,22 @@ module createCosmosConnectionStringSecret 'br:crbicepmodulesjx01.azurecr.io/help
   }
 }
 
-module createCognitiveServicesAccountKeySecret 'br:crbicepmodulesjx01.azurecr.io/helpers/create-cognitive-service-account-key-secret:1.0.1' = {
-  name: 'create-cognitive-service-account-key-secret-deploy'
+// signalr
+module signalr 'br:crbicepmodulesjx01.azurecr.io/microsoft.signalr/signalr:1.0.1' = {
+  name: 'signalr-deploy'
+  params: {
+    baseName: 'workflow-app-jx01'
+    location: location
+  }
+}
+
+module createSignalRConnectionStringSecret 'br:crbicepmodulesjx01.azurecr.io/helpers/create-signalr-connection-string-secret:1.0.1' = {
+  name: 'signalr-connection-string-secret-deploy'
   params: {
     keyVaultName: 'kv-secret-service-jx01'
     keyVaultResourceGroupName: 'rg-services'
-    cognitiveServicesName: 'cog-services-jx01'
-    cognitiveServicesResourceGroupName: 'rg-services'
-    secretName: 'cognitive-service-access-key'
+    signalrServiceName: signalr.outputs.signalr_name
+    secretName: 'signalr-connection-string'
   }
 }
 
@@ -175,6 +184,10 @@ module func 'br:crbicepmodulesjx01.azurecr.io/microsoft.web/function-app:1.1.2' 
       {
         name: 'CognitiveServicesKey'
         value: '@Microsoft.KeyVault(VaultName=kv-secret-service-jx01;SecretName=cognitive-service-access-key)'
+      }
+      {
+        name: 'SignalRServiceConnectionString'
+        value: '@Microsoft.KeyVault(VaultName=kv-secret-service-jx01;SecretName=signalr-connection-string)'
       }
     ]
   }

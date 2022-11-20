@@ -11,7 +11,7 @@
     <script>
       $(function() {
         const connection = new signalR.HubConnectionBuilder()
-          .withUrl("https://func-workflow-app-jx01.azurewebsites.net/api/negotiate")
+          .withUrl("https://func-workflow-app-jx01.azurewebsites.net/api")
           .configureLogging(signalR.LogLevel.Information)
           .build();
 
