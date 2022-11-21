@@ -6,3 +6,5 @@ obj/
 
 *.zip
 output/
+
+**/.DS_Store

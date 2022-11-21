@@ -110,6 +110,24 @@ module createCosmosConnectionStringSecret 'br:crbicepmodulesjx01.azurecr.io/help
   }
 }
 
+module signalr 'br:crbicepmodulesjx01.azurecr.io/microsoft.signalr/signalr:1.0.1' = {
+  name: 'signalr-deploy'
+  params: {
+    baseName: 'workflow-app-jx01'
+    location: location
+  }
+}
+
+module createSignalRConnectionStringSecret 'br:crbicepmodulesjx01.azurecr.io/helpers/create-signalr-connection-string-secret:1.0.1' = {
+  name: 'signalr-connection-string-secret-deploy'
+  params: {
+    keyVaultName: 'kv-secret-service-jx01'
+    keyVaultResourceGroupName: 'rg-services'
+    signalrServiceName: signalr.outputs.signalr_name
+    secretName: 'signalr-connection-string'
+  }
+}
+
 // function app
 module func 'br:crbicepmodulesjx01.azurecr.io/microsoft.web/function-app:1.1.2' = {
   name: 'function-app-deploy'
@@ -154,6 +172,10 @@ module func 'br:crbicepmodulesjx01.azurecr.io/microsoft.web/function-app:1.1.2' 
       {
         name: 'CognitiveServicesKey'
         value: '@Microsoft.KeyVault(VaultName=kv-secret-service-jx01;SecretName=cognitive-service-access-key)'
+      }
+      {
+        name: 'SignalRServiceConnectionString'
+        value: '@Microsoft.KeyVault(VaultName=kv-secret-service-jx01;SecretName=signalr-connection-string)'
       }
     ]
   }
