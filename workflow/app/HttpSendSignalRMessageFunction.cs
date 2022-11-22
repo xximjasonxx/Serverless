@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Microsoft.Azure.WebJobs.Extensions.SignalRService;
+using System.Collections.Generic;
 
 namespace WorkflowApp
 {
@@ -15,7 +16,8 @@ namespace WorkflowApp
     {
         [FunctionName("SendSignalTest")]
         public IActionResult SendSignalTest(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "signal/send")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "signal/send/{level}")] HttpRequest req,
+            string level,
             [SignalR(HubName = "Signals", ConnectionStringSetting = "SignalRServiceConnectionString")]ICollector<SignalRMessage> signalMessages,
             ILogger log)
         {
@@ -26,9 +28,10 @@ namespace WorkflowApp
                 {
                     new {
                         Name = "Image.Processed",
-                        Level = "Success",
-                        Data = new {
-                            BlobName = "test.jpg"
+                        Level = level,
+                        Data = new Dictionary<string, string>
+                        {
+                            { "lookupLocation", "results/myblob.jpg" }
                         }
                     }
                 }
