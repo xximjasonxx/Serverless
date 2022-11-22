@@ -13,9 +13,9 @@ namespace WorkflowApp
 {
     public class HttpSendSignalRMessageFunction
     {
-        [FunctionName("HttpSendSignalRMessageFunction")]
+        [FunctionName("SendSignalTest")]
         public IActionResult SendSignalTest(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "signal/send")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "signal/send")] HttpRequest req,
             [SignalR(HubName = "Signals", ConnectionStringSetting = "SignalRServiceConnectionString")]ICollector<SignalRMessage> signalMessages,
             ILogger log)
         {
