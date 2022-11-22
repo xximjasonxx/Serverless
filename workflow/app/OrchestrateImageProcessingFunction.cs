@@ -58,7 +58,7 @@ namespace WorkflowApp
             await context.CallActivityAsync("SaveResult", saveResult);
 
             // send notification of save
-            /*await context.CallActivityAsync("SendSignal", new SignalInfo
+            await context.CallActivityAsync("SendSignal", new SignalInfo
             {
                 SignalType = SignalType.Success,
                 SignalName = "Image.Processed",
@@ -66,7 +66,7 @@ namespace WorkflowApp
                 {
                     { "lookupLocation", $"results/{blobName}" }
                 }
-            });*/
+            });
         }
     }
 }

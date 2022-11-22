@@ -18,7 +18,7 @@ namespace WorkflowApp
         {
             signalMessages.Add(new SignalRMessage
             {
-                Target = "MessageSend",
+                Target = "signalSend",
                 Arguments = new[]
                 {
                     new {

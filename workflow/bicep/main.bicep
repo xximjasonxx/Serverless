@@ -177,6 +177,10 @@ module func 'br:crbicepmodulesjx01.azurecr.io/microsoft.web/function-app:1.1.2' 
         name: 'SignalRServiceConnectionString'
         value: '@Microsoft.KeyVault(VaultName=kv-secret-service-jx01;SecretName=signalr-connection-string)'
       }
+      {
+        name: 'WEBSITE_RUN_FROM_PACKAGE'
+        value: '1'
+      }
     ]
   }
 }

@@ -109,6 +109,10 @@ module func 'br:crbicepmodulesjx01.azurecr.io/microsoft.web/function-app:1.0.0' 
         name: 'StorageAccountConnection__serviceUri'
         value: 'https://${sa.outputs.storageAccountName}.blob.${environment().suffixes.storage}'
       }
+      {
+        name: 'WEBSITE_RUN_FROM_PACKAGE'
+        value: '1'
+      }
     ]
   }
 }
