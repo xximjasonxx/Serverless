@@ -29,6 +29,7 @@ namespace WorkflowApp
                     new {
                         Name = "Image.Processed",
                         Level = level,
+                        BlobName = "myblob",
                         Data = new Dictionary<string, string>
                         {
                             { "lookupLocation", "/results/myblob.jpg" }
