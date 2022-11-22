@@ -31,7 +31,7 @@ namespace WorkflowApp
                         Level = level,
                         Data = new Dictionary<string, string>
                         {
-                            { "lookupLocation", "results/myblob.jpg" }
+                            { "lookupLocation", "/results/myblob.jpg" }
                         }
                     }
                 }

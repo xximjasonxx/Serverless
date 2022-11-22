@@ -62,6 +62,7 @@ namespace WorkflowApp
             {
                 SignalType = SignalType.Success,
                 SignalName = "Image.Processed",
+                BlobName = blobName,
                 Metadata = new Dictionary<string, string>
                 {
                     { "lookupLocation", $"results/{blobName}" }
