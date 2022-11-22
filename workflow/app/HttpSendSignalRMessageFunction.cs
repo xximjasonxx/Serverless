@@ -22,7 +22,16 @@ namespace WorkflowApp
             signalMessages.Add(new SignalRMessage
             {
                 Target = "signalSend",
-                Arguments = new[] { "Hello from Azure Functions!" }
+                Arguments = new[]
+                {
+                    new {
+                        Name = "Image.Processed",
+                        Level = "Success",
+                        Data = new {
+                            BlobName = "test.jpg"
+                        }
+                    }
+                }
             });
 
             return new CreatedResult(string.Empty, "Created");
