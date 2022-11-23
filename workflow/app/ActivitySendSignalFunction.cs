@@ -27,5 +27,26 @@ namespace WorkflowApp
                 }
             });*/
         }
+
+        [FunctionName("SendSignalTyped")]
+        public void SendSignalTyped(
+            [ActivityTrigger] SignalInfo message,
+            [SignalR(HubName = "Signals", ConnectionStringSetting = "SignalRServiceConnectionString")]ICollector<SignalRMessage> signalMessages,
+            ILogger log)
+        {
+            log.LogInformation($"Executing Activity: SendSignal - {message.SignalName}");
+            /*signalMessages.Add(new SignalRMessage
+            {
+                Target = "signalSend",
+                Arguments = new[]
+                {
+                    new {
+                        Name = signalInfo.SignalName,
+                        Level = signalInfo.SignalType.ToString(),
+                        Data = signalInfo.Metadata
+                    }
+                }
+            });*/
+        }
     }
 }

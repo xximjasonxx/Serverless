@@ -4,6 +4,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using WorkflowApp.Models;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace WorkflowApp
 {
@@ -23,7 +24,14 @@ namespace WorkflowApp
             // if acceptable score is greater than zero, request approval
             if (faceCount > 0)
             {
-                await context.CallActivityAsync("SendSignal", "Test"//new SignalInfo
+                var signalInfo = new SignalInfo
+                {
+                    SignalName = "Image.NeedsApproval"
+                };
+                await context.CallActivityAsync("SendSignalTyped", signalInfo);
+
+                var serializedString = JsonConvert.SerializeObject(signalInfo);
+                await context.CallActivityAsync("SendSignal", serializedString//new SignalInfo
                 //{
                     //SignalType = SignalType.Warning,
                     //SignalName = "Image.NeedsApproval",
