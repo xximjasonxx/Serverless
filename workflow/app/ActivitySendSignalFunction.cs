@@ -10,10 +10,12 @@ namespace WorkflowApp
     {
         [FunctionName("SendSignal")]
         public void SendSignal(
-            [ActivityTrigger] SignalInfo signalInfo,
+            [ActivityTrigger] IDurableActivityContext context,
             [SignalR(HubName = "Signals", ConnectionStringSetting = "SignalRServiceConnectionString")]ICollector<SignalRMessage> signalMessages,
             ILogger log)
         {
+            var signalInfo = context.GetInput<SignalInfo>();
+
             log.LogInformation($"Executing Activity: SendSignal - {JsonConvert.SerializeObject(signalInfo)}");
             signalMessages.Add(new SignalRMessage
             {
