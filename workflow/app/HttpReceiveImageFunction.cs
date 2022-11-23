@@ -21,6 +21,7 @@ namespace WorkflowApp
             [DurableClient] IDurableClient starter,
             ILogger log)
         {
+            log.LogInformation("Executing Http Call: ReceiveImage");
             var formdata = await req.ReadFormAsync();
             var file = formdata.Files.FirstOrDefault(x => x.Name == "image");
             if (file == null)

@@ -14,6 +14,7 @@ namespace WorkflowApp
             [SignalRConnectionInfo(HubName = "Signals", ConnectionStringSetting = "SignalRServiceConnectionString")] SignalRConnectionInfo connectionInfo,  
             ILogger log)
         {
+            log.LogInformation("Executing Http Call: negotiate");
             return connectionInfo;
         }
     }

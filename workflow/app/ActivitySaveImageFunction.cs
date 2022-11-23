@@ -16,6 +16,7 @@ namespace WorkflowApp
             [Blob("original/{blobName}", FileAccess.Write, Connection = "StorageAccountConnection")] Stream originalBlob,
             ILogger log)
         {
+            log.LogInformation("Executing Activity: SaveImage");
             await receivedBlob.CopyToAsync(originalBlob);
         }
     }

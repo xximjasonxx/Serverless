@@ -15,6 +15,7 @@ namespace WorkflowApp
             [OrchestrationTrigger] IDurableOrchestrationContext context,
             ILogger log)
         {
+            log.LogInformation("Executing Orchestrator: OrchestrateProcessImage");
             var blobName = context.GetInput<string>();
 
             // start an activity to determine acceptable score
@@ -35,9 +36,11 @@ namespace WorkflowApp
                 });
 
                 // wait for the approval
+                log.LogInformation("Need Approval: Waiting");
                 var approvalResponse = context.WaitForExternalEvent<bool>("Image.Approved");
                 await Task.WhenAny(new List<Task> { approvalResponse });
 
+                log.LogInformation("Need Approval: Received");
                 await context.CallActivityAsync("SendSignal", new SignalInfo
                 {
                     SignalType = SignalType.Success,
@@ -56,6 +59,7 @@ namespace WorkflowApp
                 colorDetectTask
             });
 
+            log.LogInformation("Image Results Gathered");
             var saveResult = new SaveResult
             {
                 id = blobName,
@@ -64,10 +68,10 @@ namespace WorkflowApp
             };
 
             // save everything
-            log.LogInformation($"Save result for blob {saveResult.BlobName}");
             await context.CallActivityAsync("SaveResult", saveResult);
 
             // send notification of save
+            log.LogInformation("Everything Done - Notifying");
             await context.CallActivityAsync("SendSignal", new SignalInfo
             {
                 SignalType = SignalType.Success,

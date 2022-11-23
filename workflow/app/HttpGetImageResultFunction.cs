@@ -23,6 +23,7 @@ namespace WorkflowApp
                 PartitionKey = "{blobName}")] dynamic result,
             ILogger log)
         {
+            log.LogInformation("Executing Http Call: GetImageResult");
             if (result == null)
                 return new NotFoundResult();
 

@@ -16,7 +16,7 @@ namespace WorkflowApp
             [CognitiveServicesBinding] CognitiveServicesClient cognitiveServicesClient,
             ILogger log)
         {
-            log.LogInformation("C# HTTP trigger function processed a request.");
+            log.LogInformation("Executing Activity: GetAcceptabilityScore");
             var acceptableScore = await cognitiveServicesClient.GetFaceCount(receivedBlob);
 
             return acceptableScore;

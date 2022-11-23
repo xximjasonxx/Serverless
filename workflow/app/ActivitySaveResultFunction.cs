@@ -17,7 +17,7 @@ namespace WorkflowApp
                 ConnectionStringSetting = "CosmosDBConnection")]out SaveResult outgoingResult,
             ILogger log)
         {
-            log.LogInformation($"Saving result for image {incomingResult.BlobName}");
+            log.LogInformation("Executing Activity: SaveResult");
             outgoingResult = incomingResult;
         }
     }

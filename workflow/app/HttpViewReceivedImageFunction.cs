@@ -19,6 +19,7 @@ namespace WorkflowApp
             [Blob("received/{blobName}", FileAccess.Read)] BlobClient receivedblob,
             ILogger log)
         {
+            log.LogInformation("Executing Http Call: ViewReceivedImage");
             var blobExists = await receivedblob.ExistsAsync();
 
             if (blobExists == false)

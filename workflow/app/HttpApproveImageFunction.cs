@@ -17,6 +17,7 @@ namespace WorkflowApp
             string instanceId,
             ILogger log)
         {
+            log.LogInformation("Executing Http Call: ApproveImage");
             var statusResult = await client.GetStatusAsync(instanceId);
             if (statusResult == null)
                 return new BadRequestObjectResult($"Instance {instanceId} could not be approved");
