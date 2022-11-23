@@ -9,24 +9,32 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp;
+using Azure.Storage.Blobs;
 
 namespace WorkflowApp
 {
     public class HttpViewReceivedImageFunction
     {
         [FunctionName("ViewReceivedImage")]
-        public IActionResult ViewReceivedImage(
+        public async Task<IActionResult> ViewReceivedImage(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "view/{blobName}")] HttpRequest req,
-            [Blob("received/{blobName}", FileAccess.Read)] Stream receivedblob,
+            [Blob("received/{blobName}", FileAccess.Read)] BlobClient receivedblob,
             ILogger log)
         {
-            if (receivedblob.Length == 0)
+            var blobExists = await receivedblob.ExistsAsync();
+
+            if (blobExists == false)
                 return new NotFoundResult();
 
             IImageFormat format;
-            using (var image = Image.Load(receivedblob, out format))
+            using var memStream = new MemoryStream();
+            await receivedblob.DownloadToAsync(memStream);
+            memStream.Position = 0;
+
+            using (var image = Image.Load(memStream, out format))
             {
-                return new FileStreamResult(receivedblob, format.DefaultMimeType);
+                memStream.Position = 0;
+                return new FileStreamResult(memStream, format.DefaultMimeType);
             }
         }
     }
