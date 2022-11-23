@@ -27,7 +27,7 @@ namespace WorkflowApp
                 return new NotFoundResult();
 
             IImageFormat format;
-            using var memStream = new MemoryStream();
+            var memStream = new MemoryStream();
             await receivedblob.DownloadToAsync(memStream);
             memStream.Position = 0;
 
