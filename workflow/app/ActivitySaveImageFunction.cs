@@ -16,7 +16,6 @@ namespace WorkflowApp
             [Blob("original/{blobName}", FileAccess.Write, Connection = "StorageAccountConnection")] Stream originalBlob,
             ILogger log)
         {
-            log.LogInformation("C# HTTP trigger function processed a request.");
             await receivedBlob.CopyToAsync(originalBlob);
         }
     }

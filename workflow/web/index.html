@@ -50,19 +50,27 @@
           .build();
 
         connection.on('signalSend', function (signal) {
-          let blobName = signal.BlobName;
+          const blobName = signal.BlobName;
           if (signal.Level == "Success") {
-            let lookupLocation = apiBaseUrl + signal.Data.lookupLocation;
+            if (signal.Name == "Image.Approved") {
+              $("#messages-container").prepend(`<div class="message signal-success">
+                <div class="messageText">Image ${blobName} approved successfully</div>
+              </div>`);
+            }
 
-            $("#messages-container").prepend(`<div class="message signal-success">
-              <div class="messageText">Image Process successfully</div>
-              <div>See results: <a href="${lookupLocation}">${blobName}</a></div>
-            </div>`);
+            if (signal.Name == "Image.NeedsApproval") {
+              const lookupLocation = apiBaseUrl + signal.Data.lookupLocation;
+
+              $("#messages-container").prepend(`<div class="message signal-success">
+                <div class="messageText">Image Process successfully</div>
+                <div>See results: <a href="${lookupLocation}">${blobName}</a></div>
+              </div>`);
+            }
           }
 
           if (signal.Level == "Warning") {
-            let approveUrl = apiBaseUrl + signal.Data.approveUrl;
-            let viewUrl = apiBaseUrl + signal.Data.viewUrl;
+            const approveUrl = apiBaseUrl + signal.Data.approveUrl;
+            const viewUrl = apiBaseUrl + signal.Data.viewUrl;
 
             $("#messages-container").prepend(`<div class="message signal-warning">
                 <div class="messageText">Image ${blobName} Need approval</div>

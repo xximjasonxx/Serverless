@@ -58,12 +58,13 @@ namespace WorkflowApp
 
             var saveResult = new SaveResult
             {
+                id = blobName,
                 BlobName = blobName,
                 ColorResult = colorDetectTask.Result
             };
 
             // save everything
-            log.LogInformation($"Save result for blob ${saveResult.BlobName}");
+            log.LogInformation($"Save result for blob {saveResult.BlobName}");
             await context.CallActivityAsync("SaveResult", saveResult);
 
             // send notification of save
