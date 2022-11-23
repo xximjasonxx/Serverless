@@ -1,11 +1,9 @@
-using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using WorkflowApp.Models;
 using Microsoft.Extensions.Logging;
-using WorkflowApp.Extensions;
 
 namespace WorkflowApp
 {
@@ -25,28 +23,28 @@ namespace WorkflowApp
             // if acceptable score is greater than zero, request approval
             if (faceCount > 0)
             {
-                await context.CallActivityAsync("SendSignal", (new SignalInfo
+                await context.CallActivityAsync("SendSignal", new SignalInfo
                 {
                     SignalType = SignalType.Warning,
                     SignalName = "Image.NeedsApproval",
                     BlobName = blobName,
-                    Metadata = new Dictionary<string, string>
+                    /*Metadata = new Dictionary<string, string>
                     {
                         { "blobLocation", $"image/raw/{blobName}" }
-                    }
-                }).AsString());
+                    }*/
+                });
 
                 // wait for the approval
                 var approvalResponse = context.WaitForExternalEvent<bool>("Image.Approved");
                 await Task.WhenAny(new List<Task> { approvalResponse });
 
-                await context.CallActivityAsync("SendSignal", (new SignalInfo
+                await context.CallActivityAsync("SendSignal", new SignalInfo
                 {
                     SignalType = SignalType.Success,
                     SignalName = "Image.Approved",
                     BlobName = blobName,
-                    Metadata = null
-                }).AsString());
+                    //Metadata = null
+                });
             }
 
             // save the result
@@ -69,16 +67,17 @@ namespace WorkflowApp
             await context.CallActivityAsync("SaveResult", saveResult);
 
             // send notification of save
-            await context.CallActivityAsync("SendSignal", (new SignalInfo
+
+            await context.CallActivityAsync("SendSignal", new SignalInfo
             {
                 SignalType = SignalType.Success,
                 SignalName = "Image.Processed",
                 BlobName = blobName,
-                Metadata = new Dictionary<string, string>
+                /*Metadata = new Dictionary<string, string>
                 {
                     { "lookupLocation", $"results/{blobName}" }
-                }
-            }).AsString());
+                }*/
+            });
         }
     }
 }
