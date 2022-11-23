@@ -2,7 +2,6 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Azure.WebJobs.Extensions.SignalRService;
-using Newtonsoft.Json;
 
 namespace WorkflowApp
 {
@@ -10,11 +9,11 @@ namespace WorkflowApp
     {
         [FunctionName("SendSignal")]
         public void SendSignal(
-            [ActivityTrigger] SignalInfo signalInfo,
+            [ActivityTrigger] string message,
             [SignalR(HubName = "Signals", ConnectionStringSetting = "SignalRServiceConnectionString")]ICollector<SignalRMessage> signalMessages,
             ILogger log)
         {
-            log.LogInformation($"Executing Activity: SendSignal - {JsonConvert.SerializeObject(signalInfo)}");
+            log.LogInformation($"Executing Activity: SendSignal - {message}");
             /*signalMessages.Add(new SignalRMessage
             {
                 Target = "signalSend",
