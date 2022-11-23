@@ -1,10 +1,8 @@
-
-using System.IO;
-using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Azure.WebJobs.Extensions.SignalRService;
+using Newtonsoft.Json;
 
 namespace WorkflowApp
 {
@@ -16,7 +14,7 @@ namespace WorkflowApp
             [SignalR(HubName = "Signals", ConnectionStringSetting = "SignalRServiceConnectionString")]ICollector<SignalRMessage> signalMessages,
             ILogger log)
         {
-            log.LogInformation($"Executing Activity: SendSignal - {signalInfo.SignalName}");
+            log.LogInformation($"Executing Activity: SendSignal - {JsonConvert.SerializeObject(signalInfo)}");
             signalMessages.Add(new SignalRMessage
             {
                 Target = "signalSend",
