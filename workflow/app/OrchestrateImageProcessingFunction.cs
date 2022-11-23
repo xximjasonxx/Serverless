@@ -5,6 +5,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using WorkflowApp.Models;
 using Microsoft.Extensions.Logging;
+using WorkflowApp.Extensions;
 
 namespace WorkflowApp
 {
@@ -24,7 +25,7 @@ namespace WorkflowApp
             // if acceptable score is greater than zero, request approval
             if (faceCount > 0)
             {
-                await context.CallActivityAsync("SendSignal", new SignalInfo
+                await context.CallActivityAsync("SendSignal", (new SignalInfo
                 {
                     SignalType = SignalType.Warning,
                     SignalName = "Image.NeedsApproval",
@@ -33,21 +34,19 @@ namespace WorkflowApp
                     {
                         { "blobLocation", $"image/raw/{blobName}" }
                     }
-                });
+                }).AsString());
 
                 // wait for the approval
-                log.LogInformation("Need Approval: Waiting");
                 var approvalResponse = context.WaitForExternalEvent<bool>("Image.Approved");
                 await Task.WhenAny(new List<Task> { approvalResponse });
 
-                log.LogInformation("Need Approval: Received");
-                await context.CallActivityAsync("SendSignal", new SignalInfo
+                await context.CallActivityAsync("SendSignal", (new SignalInfo
                 {
                     SignalType = SignalType.Success,
                     SignalName = "Image.Approved",
                     BlobName = blobName,
                     Metadata = null
-                });
+                }).AsString());
             }
 
             // save the result
@@ -59,7 +58,6 @@ namespace WorkflowApp
                 colorDetectTask
             });
 
-            log.LogInformation("Image Results Gathered");
             var saveResult = new SaveResult
             {
                 id = blobName,
@@ -71,8 +69,7 @@ namespace WorkflowApp
             await context.CallActivityAsync("SaveResult", saveResult);
 
             // send notification of save
-            log.LogInformation("Everything Done - Notifying");
-            await context.CallActivityAsync("SendSignal", new SignalInfo
+            await context.CallActivityAsync("SendSignal", (new SignalInfo
             {
                 SignalType = SignalType.Success,
                 SignalName = "Image.Processed",
@@ -81,7 +78,7 @@ namespace WorkflowApp
                 {
                     { "lookupLocation", $"results/{blobName}" }
                 }
-            });
+            }).AsString());
         }
     }
 }
