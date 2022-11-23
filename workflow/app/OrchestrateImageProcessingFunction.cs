@@ -25,9 +25,9 @@ namespace WorkflowApp
             {
                 await context.CallActivityAsync("SendSignal", new SignalInfo
                 {
-                    SignalType = SignalType.Warning,
+                    //SignalType = SignalType.Warning,
                     SignalName = "Image.NeedsApproval",
-                    BlobName = blobName,
+                    //BlobName = blobName,
                     /*Metadata = new Dictionary<string, string>
                     {
                         { "blobLocation", $"image/raw/{blobName}" }
@@ -38,13 +38,13 @@ namespace WorkflowApp
                 var approvalResponse = context.WaitForExternalEvent<bool>("Image.Approved");
                 await Task.WhenAny(new List<Task> { approvalResponse });
 
-                await context.CallActivityAsync("SendSignal", new SignalInfo
+                /*await context.CallActivityAsync("SendSignal", new SignalInfo
                 {
                     SignalType = SignalType.Success,
                     SignalName = "Image.Approved",
                     BlobName = blobName,
                     //Metadata = null
-                });
+                });*/
             }
 
             // save the result
@@ -67,17 +67,16 @@ namespace WorkflowApp
             await context.CallActivityAsync("SaveResult", saveResult);
 
             // send notification of save
-
-            await context.CallActivityAsync("SendSignal", new SignalInfo
+            /*await context.CallActivityAsync("SendSignal", new SignalInfo
             {
                 SignalType = SignalType.Success,
                 SignalName = "Image.Processed",
                 BlobName = blobName,
-                /*Metadata = new Dictionary<string, string>
+                Metadata = new Dictionary<string, string>
                 {
                     { "lookupLocation", $"results/{blobName}" }
-                }*/
-            });
+                }*
+            });*/
         }
     }
 }
