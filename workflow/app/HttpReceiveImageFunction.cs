@@ -14,7 +14,7 @@ namespace WorkflowApp
 {
     public class HttpReceiveImageFunction
     {
-        [FunctionName("HttpReceiveImageFunction")]
+        [FunctionName("ReceiveImage")]
         public async Task<IActionResult> ReceiveImage(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "image")] HttpRequest req,
             [Blob("received", FileAccess.Write, Connection = "StorageAccountConnection")] BlobContainerClient containerClient,
