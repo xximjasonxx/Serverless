@@ -27,6 +27,7 @@ namespace WorkflowApp
                 {
                     SignalType = SignalType.Warning,
                     SignalName = "Image.NeedsApproval",
+                    BlobName = blobName,
                     Metadata = new Dictionary<string, string>
                     {
                         { "blobLocation", $"image/raw/{blobName}" }
@@ -36,6 +37,14 @@ namespace WorkflowApp
                 // wait for the approval
                 var approvalResponse = context.WaitForExternalEvent<bool>("Image.Approved");
                 await Task.WhenAny(new List<Task> { approvalResponse });
+
+                await context.CallActivityAsync("SendSignal", new SignalInfo
+                {
+                    SignalType = SignalType.Success,
+                    SignalName = "Image.Approved",
+                    BlobName = blobName,
+                    Metadata = null
+                });
             }
 
             // save the result
