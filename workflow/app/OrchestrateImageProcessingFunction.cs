@@ -24,7 +24,7 @@ namespace WorkflowApp
             // if acceptable score is greater than zero, request approval
             if (faceCount > 0)
             {
-                var signalInfo = new SignalInfo
+                /*var signalInfo = new SignalInfo
                 {
                     SignalName = "Image.NeedsApproval",
                     SignalType = SignalType.Warning,
@@ -33,9 +33,8 @@ namespace WorkflowApp
                     {
                         { "lookupLocation", $"view/{blobName}" }
                     }*/
-                };
 
-                await context.CallActivityAsync("SendSignal", signalInfo);
+                await context.CallActivityAsync("SendNeedsApprovalSignal", blobName);
 
                 // wait for the approval
                 var approvalResponse = context.WaitForExternalEvent<bool>("Image.Approved");
