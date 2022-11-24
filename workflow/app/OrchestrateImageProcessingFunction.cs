@@ -27,7 +27,8 @@ namespace WorkflowApp
                 var signalInfo = new SignalInfo
                 {
                     SignalName = "Image.NeedsApproval",
-                    SignalType = SignalType.Warning
+                    SignalType = SignalType.Warning,
+                    BlobName = blobName
                 };
                 await context.CallActivityAsync("SendSignalTyped", signalInfo);
 
