@@ -7,7 +7,7 @@ namespace WorkflowApp
 {
     public class ActivitySendSignalFunction
     {
-        [FunctionName("SendSignal")]
+        [FunctionName("SendSignalString")]
         public void SendSignal(
             [ActivityTrigger] string message,
             [SignalR(HubName = "Signals", ConnectionStringSetting = "SignalRServiceConnectionString")]ICollector<SignalRMessage> signalMessages,
@@ -28,7 +28,7 @@ namespace WorkflowApp
             });*/
         }
 
-        [FunctionName("SendSignalTyped")]
+        [FunctionName("SendSignal")]
         public void SendSignalTyped(
             [ActivityTrigger] SignalInfo message,
             [SignalR(HubName = "Signals", ConnectionStringSetting = "SignalRServiceConnectionString")]ICollector<SignalRMessage> signalMessages,

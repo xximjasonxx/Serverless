@@ -28,21 +28,14 @@ namespace WorkflowApp
                 {
                     SignalName = "Image.NeedsApproval",
                     SignalType = SignalType.Warning,
-                    BlobName = blobName
-                };
-                await context.CallActivityAsync("SendSignalTyped", signalInfo);
-
-                var serializedString = JsonConvert.SerializeObject(signalInfo);
-                await context.CallActivityAsync("SendSignal", serializedString//new SignalInfo
-                //{
-                    //SignalType = SignalType.Warning,
-                    //SignalName = "Image.NeedsApproval",
-                    //BlobName = blobName,
-                    /*Metadata = new Dictionary<string, string>
+                    BlobName = blobName,
+                    Metadata = new Dictionary<string, string>
                     {
-                        { "blobLocation", $"image/raw/{blobName}" }
-                    }*/
-                /*}*/);
+                        { "lookupLocation", $"view/{blobName}" }
+                    }
+                };
+
+                await context.CallActivityAsync("SendSignal", signalInfo);
 
                 // wait for the approval
                 var approvalResponse = context.WaitForExternalEvent<bool>("Image.Approved");
