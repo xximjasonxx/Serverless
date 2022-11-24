@@ -29,10 +29,10 @@ namespace WorkflowApp
                     SignalName = "Image.NeedsApproval",
                     SignalType = SignalType.Warning,
                     BlobName = blobName,
-                    Metadata = new Dictionary<string, string>
+                    /*Metadata = new Dictionary<string, string>
                     {
                         { "lookupLocation", $"view/{blobName}" }
-                    }
+                    }*/
                 };
 
                 await context.CallActivityAsync("SendSignal", signalInfo);
