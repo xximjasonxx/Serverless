@@ -27,7 +27,7 @@ namespace WorkflowApp
                         BlobName = blobName,
                         Data = new
                         {
-                            lookupLocation = $"view/{blobName}"
+                            viewUrl = $"view/{blobName}"
                         }
                     }
                 }
