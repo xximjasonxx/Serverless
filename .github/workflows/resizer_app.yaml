@@ -10,7 +10,8 @@ on:
     paths:
       - .github/workflows/resizer_app.yaml
       - resizer/app
-
+  workflow_dispatch:
+    
 permissions:
   id-token: write
   contents: read
