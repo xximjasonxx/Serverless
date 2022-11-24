@@ -34,7 +34,7 @@ namespace WorkflowApp
             [SignalR(HubName = "Signals", ConnectionStringSetting = "SignalRServiceConnectionString")]ICollector<SignalRMessage> signalMessages,
             ILogger log)
         {
-            log.LogInformation($"Executing Activity: SendSignal - {message.SignalName}");
+            log.LogInformation($"Executing Activity: SendSignalTyped - {message.SignalName}");
             /*signalMessages.Add(new SignalRMessage
             {
                 Target = "signalSend",
