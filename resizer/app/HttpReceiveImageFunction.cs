@@ -19,20 +19,20 @@ namespace ImageApi
             [Blob("raw", FileAccess.Write, Connection = "StorageAccountConnection")] BlobContainerClient containerClient,
             ILogger log)
         {
-            var imageStream = req.Body;
-            if (imageStream == null)
+            var formdata = await req.ReadFormAsync();
+            var file = formdata.Files.FirstOrDefault(x => x.Name == "image");
+            if (file == null)
             {
-                return new BadRequestObjectResult("No image provided");
+                return new BadRequestObjectResult("No key 'image' file found in form data");
             }
 
-            if (imageStream?.Length == 0)
+            if (file.Length == 0)
             {
                 return new BadRequestObjectResult("Empty image provided");
             }
 
             var blobName = Guid.NewGuid().ToString();
             var blobClient = containerClient.GetBlobClient(blobName);
-            
             var contentInfo = await blobClient.UploadAsync(imageStream);
             var rawResponse = contentInfo.GetRawResponse();
 
