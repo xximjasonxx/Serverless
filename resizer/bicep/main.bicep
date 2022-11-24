@@ -52,7 +52,7 @@ module sa 'br:crbicepmodulesjx01.azurecr.io/microsoft.storage/account:1.0.0' = {
 module appi 'br:crbicepmodulesjx01.azurecr.io/microsoft.insights/application-insights:1.0.0' = {
   name: 'application-insights-deploy'
   params: {
-    baseName: 'image-api-jx01'
+    baseName: 'resizer-app-jx01'
     location: location
     kind: 'web'
     applicationType: 'web'
@@ -62,7 +62,7 @@ module appi 'br:crbicepmodulesjx01.azurecr.io/microsoft.insights/application-ins
 module plan 'br:crbicepmodulesjx01.azurecr.io/microsoft.web/app-service-plan:1.0.0' = {
   name: 'function-app-service-plan-deploy'
   params: {
-    baseName: 'image-api-jx01'
+    baseName: 'resizer-app-jx01'
     location: location
     sku: {
       name: 'Y1'
@@ -76,7 +76,7 @@ module plan 'br:crbicepmodulesjx01.azurecr.io/microsoft.web/app-service-plan:1.0
 module func 'br:crbicepmodulesjx01.azurecr.io/microsoft.web/function-app:1.1.2' = {
   name: 'function-app-deploy'
   params: {
-    baseName: 'image-api-jx01'
+    baseName: 'resizer-app-jx01'
     location: location
     appServicePlanId: plan.outputs.planId
     isLinux: true

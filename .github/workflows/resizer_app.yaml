@@ -41,5 +41,5 @@ jobs:
     - name: Deploy
       uses: azure/functions-action@v1
       with:
-        app-name: func-image-api-jx01
+        app-name: func-resizer-app-jx01
         package: output/
