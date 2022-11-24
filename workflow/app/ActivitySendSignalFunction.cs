@@ -54,5 +54,31 @@ namespace WorkflowApp
                 }
             });
         }
+
+        [FunctionName("SendProcessedSignal")]
+        public void SendProcessedSignal(
+            [ActivityTrigger] IDurableActivityContext context,
+            [SignalR(HubName = "Signals", ConnectionStringSetting = "SignalRServiceConnectionString")]ICollector<SignalRMessage> signalMessages,
+            ILogger log)
+        {
+            var blobName = context.GetInput<string>();
+            log.LogInformation($"Executing Activity: SendProcessedSignal - {blobName}");
+
+            signalMessages.Add(new SignalRMessage
+            {
+                Target = "signalSend",
+                Arguments = new[]
+                {
+                    new {
+                        Name = "Image.Processed",
+                        Level = "Success",
+                        Data = new
+                        {
+                            lookupLocation = $"results/{blobName}"
+                        }
+                    }
+                }
+            });
+        }
     }
 }
