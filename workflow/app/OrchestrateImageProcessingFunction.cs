@@ -33,7 +33,7 @@ namespace WorkflowApp
                     {
                         { "lookupLocation", $"view/{blobName}" }
                     }*/
-
+                log.LogInformation($"blobName: {blobName}");
                 await context.CallActivityAsync("SendNeedsApprovalSignal", blobName);
 
                 // wait for the approval

@@ -8,24 +8,29 @@ namespace WorkflowApp
     public class ActivitySendSignalFunction
     {
         [FunctionName("SendNeedsApprovalSignal")]
-        public void SendSignal(
-            [ActivityTrigger] string blobName,
+        public void SendNeedsApprovalSignal(
+            [ActivityTrigger] IDurableActivityContext context,
             [SignalR(HubName = "Signals", ConnectionStringSetting = "SignalRServiceConnectionString")]ICollector<SignalRMessage> signalMessages,
             ILogger log)
         {
+            var blobName = context.GetInput<string>();
             log.LogInformation($"Executing Activity: SendNeedsApprovalSignal - {blobName}");
-            /*signalMessages.Add(new SignalRMessage
+
+            signalMessages.Add(new SignalRMessage
             {
                 Target = "signalSend",
                 Arguments = new[]
                 {
                     new {
-                        Name = signalInfo.SignalName,
-                        Level = signalInfo.SignalType.ToString(),
-                        Data = signalInfo.Metadata
+                        Name = "Image.NeedsApproval",
+                        Level = "Warning",
+                        Data = new
+                        {
+                            lookupLocation = $"view/{blobName}"
+                        }
                     }
                 }
-            });*/
+            });
         }
     }
 }
