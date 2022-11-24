@@ -24,6 +24,7 @@ namespace WorkflowApp
                     new {
                         Name = "Image.NeedsApproval",
                         Level = "Warning",
+                        Blobname = blobName,
                         Data = new
                         {
                             lookupLocation = $"view/{blobName}"
@@ -49,7 +50,8 @@ namespace WorkflowApp
                 {
                     new {
                         Name = "Image.Approved",
-                        Level = "Success"
+                        Level = "Success",
+                        Blobname = blobName,
                     }
                 }
             });
@@ -72,6 +74,7 @@ namespace WorkflowApp
                     new {
                         Name = "Image.Processed",
                         Level = "Success",
+                        Blobname = blobName,
                         Data = new
                         {
                             lookupLocation = $"results/{blobName}"
