@@ -9,7 +9,7 @@ on:
       - main
     paths:
       - .github/workflows/resizer_app.yaml
-      - resizer/app
+      - resizer/app/**
   workflow_dispatch:
     
 permissions:

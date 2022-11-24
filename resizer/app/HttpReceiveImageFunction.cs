@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
@@ -33,7 +34,7 @@ namespace ImageApi
 
             var blobName = Guid.NewGuid().ToString();
             var blobClient = containerClient.GetBlobClient(blobName);
-            var contentInfo = await blobClient.UploadAsync(imageStream);
+            var contentInfo = await blobClient.UploadAsync(file.OpenReadStream());
             var rawResponse = contentInfo.GetRawResponse();
 
             return new CreatedResult($"/image/{blobName}", $"response: {rawResponse.ReasonPhrase}");
