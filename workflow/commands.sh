@@ -1,0 +1,2 @@
+az storage blob service-properties update --account-name stserverlessimagesjx02 --static-website --index-document index.html
+az storage blob upload --account-name stserverlessimagesjx02 --file workflow/web/index.html -c '$web' --name 'index.html'
