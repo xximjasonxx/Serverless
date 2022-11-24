@@ -32,5 +32,27 @@ namespace WorkflowApp
                 }
             });
         }
+
+        [FunctionName("SendApprovedSignal")]
+        public void SendApprovedSignal(
+            [ActivityTrigger] IDurableActivityContext context,
+            [SignalR(HubName = "Signals", ConnectionStringSetting = "SignalRServiceConnectionString")]ICollector<SignalRMessage> signalMessages,
+            ILogger log)
+        {
+            var blobName = context.GetInput<string>();
+            log.LogInformation($"Executing Activity: SendNeedsApprovalSignal - {blobName}");
+
+            signalMessages.Add(new SignalRMessage
+            {
+                Target = "signalSend",
+                Arguments = new[]
+                {
+                    new {
+                        Name = "Image.Approved",
+                        Level = "Success"
+                    }
+                }
+            });
+        }
     }
 }

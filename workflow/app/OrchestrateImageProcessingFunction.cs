@@ -24,29 +24,12 @@ namespace WorkflowApp
             // if acceptable score is greater than zero, request approval
             if (faceCount > 0)
             {
-                /*var signalInfo = new SignalInfo
-                {
-                    SignalName = "Image.NeedsApproval",
-                    SignalType = SignalType.Warning,
-                    BlobName = blobName,
-                    /*Metadata = new Dictionary<string, string>
-                    {
-                        { "lookupLocation", $"view/{blobName}" }
-                    }*/
-                log.LogInformation($"blobName: {blobName}");
                 await context.CallActivityAsync("SendNeedsApprovalSignal", blobName);
 
                 // wait for the approval
                 var approvalResponse = context.WaitForExternalEvent<bool>("Image.Approved");
                 await Task.WhenAny(new List<Task> { approvalResponse });
-
-                /*await context.CallActivityAsync("SendSignal", new SignalInfo
-                {
-                    SignalType = SignalType.Success,
-                    SignalName = "Image.Approved",
-                    BlobName = blobName,
-                    //Metadata = null
-                });*/
+                await context.CallActivityAsync("SendApprovedSignal", blobName);
             }
 
             // save the result
