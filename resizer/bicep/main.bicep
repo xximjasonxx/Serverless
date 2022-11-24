@@ -16,7 +16,7 @@ module managedId 'br:crbicepmodulesjx01.azurecr.io/microsoft.identity/user-manag
 module sa 'br:crbicepmodulesjx01.azurecr.io/microsoft.storage/account:1.0.0' = {
   name: 'storage-account-deploy'
   params: {
-    baseName: 'serverlessimagesjx01'
+    baseName: 'resizerimagesjx01'
     location: location
     rbacAssignments: [
       {
@@ -26,10 +26,16 @@ module sa 'br:crbicepmodulesjx01.azurecr.io/microsoft.storage/account:1.0.0' = {
     ]
     containers: [
       {
-        name: 'no-rbac'
+        name: 'raw'
+        rbacAssignments: [
+          {
+            roleDefinitionId: 'ba92f5b4-2d11-453d-a403-e96b0029c9fe'
+            principalId: managedId.outputs.principalId
+          }
+        ]
       }
       {
-        name: 'rbac'
+        name: 'resized'
         rbacAssignments: [
           {
             roleDefinitionId: 'ba92f5b4-2d11-453d-a403-e96b0029c9fe'
@@ -67,7 +73,7 @@ module plan 'br:crbicepmodulesjx01.azurecr.io/microsoft.web/app-service-plan:1.0
   }
 }
 
-module func 'br:crbicepmodulesjx01.azurecr.io/microsoft.web/function-app:1.0.0' = {
+module func 'br:crbicepmodulesjx01.azurecr.io/microsoft.web/function-app:1.1.2' = {
   name: 'function-app-deploy'
   params: {
     baseName: 'image-api-jx01'
@@ -76,26 +82,12 @@ module func 'br:crbicepmodulesjx01.azurecr.io/microsoft.web/function-app:1.0.0' 
     isLinux: true
     identityType: 'managed'
     managedIdentityId: managedId.outputs.resourceId
+    storageAccountName: sa.outputs.storageAccountName
+    applicationInsightsInstrumentationKey: appi.outputs.instrumentationKey
     appSettings: [
-      {
-        name: 'AzureWebJobsStoageAccountConnection_serviceUri'
-        value: 'https://${sa.outputs.storageAccountName}.blob.${environment().suffixes.storage}'
-      }
       {
         name: 'FUNCTIONS_EXTENSION_VERSION'
         value: '~4'
-      }
-      {
-        name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
-        value: appi.outputs.instrumentationKey
-      }
-      {
-        name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
-        value: 'InstrumentationKey=${appi.outputs.instrumentationKey}'
-      }
-      {
-        name: 'AzureWebJobsStorage'
-        value: 'DefaultEndpointsProtocol=https;AccountName=${sa.outputs.storageAccountName};AccountKey=${sa.outputs.storageAccountKey};EndpointSuffix=${environment().suffixes.storage}'
       }
       {
         name: 'StorageAccountConnection__clientId'
